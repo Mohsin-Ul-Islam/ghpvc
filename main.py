@@ -1,6 +1,6 @@
 from os import environ
 
-from flask import Flask
+from flask import Flask, make_response, Response
 from redis import Redis
 
 app = Flask(__name__)
@@ -23,7 +23,7 @@ def index() -> tuple:
 
 
 @app.route("/<username>", methods=["GET"])
-def get_view_count(username: str) -> dict:
+def get_view_count(username: str) -> Response:
 
     count = client.get(username)
     if count is None:
@@ -32,4 +32,7 @@ def get_view_count(username: str) -> dict:
     count = int(count) + 1
     client.set(username, count)
 
-    return get_ghpvc_image(count), 200
+    response = make_response(get_ghpvc_image(count), 200)
+    response.headers["Content-Type"] = "image/svg+xml"
+
+    return response
