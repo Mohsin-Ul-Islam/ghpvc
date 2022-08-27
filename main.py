@@ -33,6 +33,8 @@ def get_view_count(username: str) -> Response:
     client.set(username, count)
 
     response = make_response(get_ghpvc_image(count), 200)
+
     response.headers["Content-Type"] = "image/svg+xml"
+    response.headers["Cache-Control"] = "max-age=0, no-cache, no-store, must-revalidate"
 
     return response
