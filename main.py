@@ -22,7 +22,7 @@ def index() -> tuple:
     return "Github profile view counter api.", 200
 
 
-@app.route("/<username>/count", methods=["GET"])
+@app.route("/<username>", methods=["GET"])
 def get_view_count(username: str) -> dict:
 
     count = client.get(username)
