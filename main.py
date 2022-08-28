@@ -15,7 +15,7 @@ client = Redis(
 
 
 def github_username_exists(username: str) -> bool:
-    return get(f"https://github.com/{username}").status_code != 200
+    return get(f"https://github.com/{username}").status_code == 200
 
 
 def get_ghpvc_image(count: int) -> str:
