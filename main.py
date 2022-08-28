@@ -30,6 +30,7 @@ def index() -> tuple:
 @app.route("/<username>", methods=["GET"])
 def get_view_count(username: str) -> Response:
 
+    username = username.lower()
     count = client.get(username)
     if count is None:
 
