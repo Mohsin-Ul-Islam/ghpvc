@@ -2,6 +2,7 @@ from os import environ
 
 from flask import Flask, make_response, Response
 from redis import Redis
+from requests import get
 
 app = Flask(__name__)
 
@@ -11,6 +12,10 @@ client = Redis(
     decode_responses=True,
     db=0,
 )
+
+
+def github_username_exists(username: str) -> bool:
+    return get(f"https://github.com/{username}").status_code != 200
 
 
 def get_ghpvc_image(count: int) -> str:
@@ -27,6 +32,10 @@ def get_view_count(username: str) -> Response:
 
     count = client.get(username)
     if count is None:
+
+        if not github_username_exists(username):
+            return "Github username not found!", 404
+
         count = 0
 
     count = int(count) + 1
