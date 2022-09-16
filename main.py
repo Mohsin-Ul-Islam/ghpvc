@@ -1,4 +1,5 @@
 from os import environ
+from ipaddress import ip_address, ip_network
 
 from flask import Flask, make_response, Response, request
 from redis import Redis
@@ -42,9 +43,11 @@ def get_view_count(username: str) -> Response:
         count = 0
         client.set(username, count)
 
-    if request.remote_addr in github_camo_ips:
-        count = int(count) + 1
-        client.set(username, count)
+    for ip_range in github_camo_ips:
+        if ip_address(request.remote_addr) in ip_network(ip_range):
+            count = int(count) + 1
+            client.set(username, count)
+            break
 
     response = make_response(get_ghpvc_image(count), 200)
 
