@@ -44,7 +44,9 @@ def get_view_count(username: str) -> Response:
         client.set(username, count)
 
     for ip_range in github_camo_ips:
-        if ip_address(request.remote_addr) in ip_network(ip_range):
+        if ip_address(
+            request.environ.get("HTTP_X_REAL_IP", request.remote_addr)
+        ) in ip_network(ip_range):
             count = int(count) + 1
             client.set(username, count)
             break
