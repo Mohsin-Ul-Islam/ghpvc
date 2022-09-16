@@ -24,6 +24,7 @@ services:
     environment:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
+      - GITHUB_CAMO_IPS
 
 volumes:
   data-ghpvc-redis: {}

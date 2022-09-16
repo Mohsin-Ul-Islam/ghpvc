@@ -1,6 +1,6 @@
 from os import environ
 
-from flask import Flask, make_response, Response
+from flask import Flask, make_response, Response, request
 from redis import Redis
 from requests import get
 
@@ -12,6 +12,8 @@ client = Redis(
     decode_responses=True,
     db=0,
 )
+
+github_camo_ips = environ.get("GITHUB_CAMO_IPS", "").split(",")
 
 
 def github_username_exists(username: str) -> bool:
@@ -38,9 +40,11 @@ def get_view_count(username: str) -> Response:
             return "Github username not found!", 404
 
         count = 0
+        client.set(username, count)
 
-    count = int(count) + 1
-    client.set(username, count)
+    if request.remote_addr in github_camo_ips:
+        count = int(count) + 1
+        client.set(username, count)
 
     response = make_response(get_ghpvc_image(count), 200)
 
